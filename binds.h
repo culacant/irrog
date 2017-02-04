@@ -1,0 +1,19 @@
+#include <irrlicht/irrlicht.h>
+
+using namespace irr;
+
+enum KEYBINDS
+{
+	KEY_QUIT			= KEY_KEY_Q,
+	KEY_VIEWPORT_UP		= KEY_KEY_W,
+	KEY_VIEWPORT_DOWN	= KEY_KEY_S,
+	KEY_VIEWPORT_LEFT	= KEY_KEY_A,
+	KEY_VIEWPORT_RIGHT	= KEY_KEY_D,
+
+	KEY_SET_TARGETPOS	= KEY_KEY_F,
+	KEY_CLEAR_TARGETPOS	= KEY_KEY_R,
+
+	KEY_MOVE			= KEY_KEY_M,
+
+	KEY_TEST			= KEY_KEY_T
+};

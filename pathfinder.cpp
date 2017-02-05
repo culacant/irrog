@@ -70,7 +70,7 @@ Point Pathmap::getLowestNeighbour(int x, int y)
 			f_pPoint = {(int)f_pNeighbours[i+4],(int)f_pNeighbours[i+8]};
 		}
 	}
-	delete []f_pNeighbours;
+	delete[] f_pNeighbours;
 	return f_pPoint;
 }
 
@@ -148,8 +148,6 @@ std::list<Point> *Pathfinder::FindPath(int ox, int oy, int tx, int ty)
         f_lPath->push_front(f_pPoint);
     }
 	f_lPath->pop_front();
-
-
 
 	return f_lPath;
 }

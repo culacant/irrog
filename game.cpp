@@ -26,12 +26,13 @@ Game::~Game()
 	delete m_pRenderer;
 	delete m_pMap;
 	delete m_pInputHandler;
+	delete m_pPathfinder;
 	for(std::list<Actor*>::iterator it = m_lActorList.begin(); it != m_lActorList.end(); ++it)
 	{
 		delete (*it);
 	}
 	m_lActorList.clear();
-	m_lBulletImpacts->clear();
+	delete m_lBulletImpacts;
 }
 
 void Game::Loop()
@@ -135,10 +136,8 @@ void Game::Loop()
 			{
 				if((*it2)->getTeam() == 1)
 				{
-					if(m_pMap->canSee((*it2),(*it)))
+					if(m_pMap->canSee((*it2),(*it)) && (*it2)->isFacing((*it)->getPosX(),(*it)->getPosY()))
 					{
-						std::cout << m_pMap->canSee((*it2),(*it)) << std::endl;
-
 						(*it)->setVisible(true);
 					}
 				}

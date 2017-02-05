@@ -61,6 +61,7 @@ Actor::Actor(int posx = 1, int posy = 1, char graphic = '@', int team = 1)
 	m_iTargetPosY = -1;
 
 	m_sState = IDLE;
+	m_sFacing = SOUTH;
 
 	m_lPath = NULL;
 	m_lBulletImpacts = new std::list<Impact>();
@@ -70,6 +71,13 @@ Actor::Actor(int posx = 1, int posy = 1, char graphic = '@', int team = 1)
 	m_iMoveSpeed = 1000/2;
 
 	m_bVisible = true;
+}
+
+Actor::~Actor()
+{
+	delete m_lBulletImpacts;
+	delete m_wWeapon;
+	delete m_lPath;
 }
 
 void Actor::setGraphic(char graphic)
@@ -100,6 +108,52 @@ int Actor::getPosY()
 	return m_iPosY;
 }
 
+FACING Actor::getFacing()
+{
+	return m_sFacing;
+}
+
+void Actor::setFacing(FACING facing)
+{
+	m_sFacing = facing;
+}
+void Actor::setFacing(int x, int y)
+{
+/*
+	int dx = m_iPosX - x;
+	int dy = m_iPosY - y;
+	float angle = atan2(dx,dy)
+	if(angle >= 0.785 && angle < 2.356)
+//	-45 -> 45
+		m_sFacing = EAST;
+	if(angle >= 2.356 && angle < 3.927)
+// 135 -> 225
+		m_sFacing = WEST;
+	if(angle > -0.785 && angle < 0.785)
+// 255 -> 345
+		m_sFacing = SOUTH;
+	if(angle > 0.785 && angle < 2.356)
+// 45 -> 135
+		m_sFacing = NORTH;
+		*/
+}
+
+
+bool Actor::isFacing(int x, int y)
+{
+	int dx = m_iPosX - x;
+	int dy = m_iPosY - y;
+	if( dx > 0 && m_sFacing == EAST)
+		return true;
+	else if( dx < 0 && m_sFacing == WEST)
+		return true;
+	else if( dy > 0 && m_sFacing == SOUTH)
+		return true;
+	else if( dy < 0 && m_sFacing == NORTH)
+		return true;
+	else
+		return false;
+}
 void Actor::setTargetPos(int x, int y)
 {
 	m_sState = FIRING;

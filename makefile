@@ -1,5 +1,5 @@
 CC = g++
-CFLAGS = -lIrrlicht -ggdb
+CFLAGS = -lasan -lIrrlicht -ggdb
 
 irrog: main.o
 	$(CC) $(CFLAGS) obj/pathfinder.o obj/input.o obj/game.o obj/renderer.o obj/main.o obj/map.o obj/squad.o obj/actor.o obj/weapon.o -o irrog

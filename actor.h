@@ -13,6 +13,14 @@ enum UNITSTATE
 	FIRING,
 };
 
+enum FACING
+{
+	NORTH,
+	EAST,
+	WEST,
+	SOUTH,
+};
+
 // Coordinate Struct
 struct Point
 {
@@ -57,6 +65,8 @@ private:
 
 	UNITSTATE m_sState;
 
+	FACING m_sFacing;
+
 	std::list<Impact> *m_lBulletImpacts;
 	std::list<Point> *m_lPath;
 
@@ -68,6 +78,7 @@ private:
 
 public:
 	Actor(int posx, int posy, char graphic, int team);
+	~Actor();
 
 	void setGraphic(char graphic);
 	char Graphic();
@@ -77,6 +88,11 @@ public:
 	void setPos(int x, int y);
 	int getPosX();
 	int getPosY();
+
+	FACING getFacing();
+	void setFacing(FACING facing);
+	void setFacing(int x, int y);
+	bool isFacing(int x, int y);
 
 	void setTargetPos(int x, int y);
 	int getTargetPosX();

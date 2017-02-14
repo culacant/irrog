@@ -3,7 +3,7 @@
 #include <iostream>
 
 // Weapon Class
-Weapon::Weapon(int magsize, int chambertime, int reloadtime, int aimtime, int burstcount)
+Weapon::Weapon(char *name, int magsize, int chambertime, int reloadtime, int aimtime, int burstcount, int supression, int supressionarea)
 {
 	m_iMagSize = magsize;
 
@@ -13,6 +13,11 @@ Weapon::Weapon(int magsize, int chambertime, int reloadtime, int aimtime, int bu
 	m_iReloadTime = reloadtime;
 	m_iAimTime = aimtime;
 	m_iBurstCount = burstcount;
+
+	m_iSupression = supression;
+	m_iSupressionArea = supressionarea;
+	
+	m_pName = name;
 }
 
 void Weapon::Update(int frametime)
@@ -87,4 +92,18 @@ bool Weapon::hasFired()
 	}
 	else
 		return false;
+}
+
+int Weapon::getSupression()
+{
+	return m_iSupression;
+}
+int Weapon::getSupressionArea()
+{
+	return m_iSupressionArea;
+}
+
+char* Weapon::getName()
+{
+	return m_pName;
 }

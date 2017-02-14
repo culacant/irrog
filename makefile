@@ -7,8 +7,8 @@ main.o: main.cpp game.o
 	$(CC) $(CFLAGS) main.cpp -c -o obj/main.o
 game.o: game.cpp renderer.o map.o squad.o actor.o weapon.o input.o pathfinder.o
 	$(CC) $(CFLAGS) game.cpp -c -o obj/game.o
-renderer.o: renderer.cpp map.o actor.o
-	$(CC) $(CFLAGS) renderer.cpp -c -o obj/renderer.o
+renderer.o: renderer3d.cpp map.o actor.o
+	$(CC) $(CFLAGS) renderer3d.cpp -c -o obj/renderer.o
 map.o: map.cpp
 	$(CC) $(CFLAGS) map.cpp -c -o obj/map.o
 squad.o: squad.cpp
@@ -23,3 +23,5 @@ pathfinder.o: pathfinder.cpp
 	$(CC) $(CFLAGS) pathfinder.cpp -c -o obj/pathfinder.o
 clean:
 	rm obj/* irrog
+renderer2d.o: renderer.cpp map.o actor.o
+	$(CC) $(CFLAGS) renderer.cpp -c -o obj/renderer.o

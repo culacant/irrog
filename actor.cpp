@@ -8,16 +8,13 @@
 
 // Impact Class
 
-Impact::Impact(int posx, int posy)
+Impact::Impact(int posx, int posy, int supression, int supressionarea)
 {
 	m_iPosX = posx;
 	m_iPosY = posy;
-	m_iTimeout = 1000;
-}
-
-void Impact::Update(int frametime)
-{
-	m_iTimeout -= frametime;
+	
+	m_iSupression = supression;
+	m_iSupressionArea = supressionarea;
 }
 
 int Impact::getPosX()
@@ -38,13 +35,15 @@ void Impact::setPosY(int posy)
 	m_iPosY = posy;
 }
 
-int Impact::TimeoutHit()
+int Impact::getSupression()
 {
-	if(m_iTimeout < 0)
-		return 1;
-	else
-		return 0;
+	return m_iSupression;
 }
+int Impact::getSupressionArea()
+{
+	return m_iSupressionArea;
+}
+
 
 // Actor Class
 
@@ -67,10 +66,12 @@ Actor::Actor(int posx = 1, int posy = 1, char graphic = '@', int team = 1)
 	m_lBulletImpacts = new std::list<Impact>();
 
 //	m_wWeapon = new Weapon(5,1000,5000);
-	m_wWeapon = new Weapon(3000,10,5000,1000,100);
+	m_wWeapon = new Weapon("Lee Enfield",3000,10,5000,1000,100,100,5);
 	m_iMoveSpeed = 1000/2;
 
 	m_bVisible = true;
+	
+	m_iSupression = 0;
 }
 
 Actor::~Actor()
@@ -119,41 +120,35 @@ void Actor::setFacing(FACING facing)
 }
 void Actor::setFacing(int x, int y)
 {
-/*
 	int dx = m_iPosX - x;
 	int dy = m_iPosY - y;
-	float angle = atan2(dx,dy)
-	if(angle >= 0.785 && angle < 2.356)
-//	-45 -> 45
-		m_sFacing = EAST;
-	if(angle >= 2.356 && angle < 3.927)
-// 135 -> 225
-		m_sFacing = WEST;
-	if(angle > -0.785 && angle < 0.785)
-// 255 -> 345
-		m_sFacing = SOUTH;
-	if(angle > 0.785 && angle < 2.356)
-// 45 -> 135
+	float angle = atan2(dx,dy) * (180/3.14);
+	if(angle > -45 && angle <= 45)
 		m_sFacing = NORTH;
-		*/
+	if(angle < -45 && angle >= -135)
+		m_sFacing = EAST;
+	if(angle < -135 || angle >= 135)
+		m_sFacing = SOUTH;
+	if(angle > 45 && angle <= 135)
+		m_sFacing = WEST;
 }
-
 
 bool Actor::isFacing(int x, int y)
 {
 	int dx = m_iPosX - x;
 	int dy = m_iPosY - y;
-	if( dx > 0 && m_sFacing == EAST)
+	float angle = atan2(dx,dy) * (180/3.14);
+	if(angle > -45 && angle <= 45 && m_sFacing == NORTH)
 		return true;
-	else if( dx < 0 && m_sFacing == WEST)
+	if(angle < -45 && angle >= -135 && m_sFacing == EAST)
 		return true;
-	else if( dy > 0 && m_sFacing == SOUTH)
+	if((angle < -135 || angle >= 135) && m_sFacing == SOUTH)
 		return true;
-	else if( dy < 0 && m_sFacing == NORTH)
+	if(angle > 45 && angle <= 135 && m_sFacing == WEST)
 		return true;
-	else
-		return false;
+	return false;
 }
+
 void Actor::setTargetPos(int x, int y)
 {
 	m_sState = FIRING;
@@ -227,7 +222,7 @@ void Actor::Update(int frametime)
 			float db = atan2(dx,dy) - 1.57;
 			int rx = std::cos(db) * (x-ox) - std::sin(db) * (y-oy) + ox;
 			int ry = std::sin(db) * (x-ox) + std::cos(db) * (y-oy) + oy;
-			Impact f_iImpact = Impact(rx,ry);
+			Impact f_iImpact = Impact(rx,ry, m_wWeapon->getSupression(), m_wWeapon->getSupressionArea());
 			m_lBulletImpacts->push_front(f_iImpact);
 		}
 	}
@@ -242,11 +237,13 @@ void Actor::Update(int frametime)
 			f_iMoveSpeedCheck = m_iMoveSpeed;
 			if(!m_lPath->empty())
 			{
+				setFacing((*m_lPath->begin()).X,(*m_lPath->begin()).Y);
 				setPos((*m_lPath->begin()).X,(*m_lPath->begin()).Y);
 				m_lPath->pop_front();
 			}
 		}
 	}
+	m_iSupression -= 10;
 }
 
 bool Actor::Visible()
@@ -256,4 +253,15 @@ bool Actor::Visible()
 bool Actor::setVisible(bool draw)
 {
 		m_bVisible = draw;
+}
+
+void Actor::Supress(int supression)
+{
+	m_iSupression += supression;
+	std::cout << m_iSupression << std::endl;
+}
+
+Weapon* Actor::getWeapon()
+{
+	return m_wWeapon;
 }

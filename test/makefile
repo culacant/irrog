@@ -1,8 +1,12 @@
 CC = g++
-CFLAGS = -ggdb -ltermbox
+CFLAGS = -ggdb -lasan -lIrrlicht -ltermbox
 
-main: beatenzone
+main: map
 
+map:map.cpp renderer
+	$(CC) $(CFLAGS) renderer.o map.cpp -o map 
+renderer: renderer3d.cpp
+	$(CC) $(CFLAGS) renderer3d.cpp -c -o renderer.o
 merge: merge.cpp
 	$(CC) $(CFLAGS) merge.cpp -o merge
 while: while.cpp

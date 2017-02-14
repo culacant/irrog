@@ -28,6 +28,9 @@ public:
 	Game();
 	~Game();
 
+	int getDistance(int x1, int y1, int x2, int y2);
+	int getFastDistance(int x1, int y1, int x2, int y2);
+
 	void Run();
 };
 

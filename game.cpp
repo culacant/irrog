@@ -1,5 +1,6 @@
 #include "game.h"
 
+#include <math.h>
 #include <iostream>
 
 // Game Class
@@ -63,6 +64,17 @@ void Game::Loop()
 				m_pSelected = (*it);
 		}
 	}
+	// facing set
+	if(m_pInputHandler->IsKeyDown(KEY_SET_FACING))
+	{
+		if(m_pSelected)
+		{
+			int x,y;
+			x = m_pRenderer->TileXAt(m_pInputHandler->MousePositionX());
+			y = m_pRenderer->TileYAt(m_pInputHandler->MousePositionY());
+			m_pSelected->setFacing(x,y);
+		}
+	}
 	// target set
 	if(m_pInputHandler->IsKeyDown(KEY_SET_TARGETPOS))
 	{
@@ -105,6 +117,7 @@ void Game::Loop()
 	// selected actor
 	if(m_pSelected)
 	{
+		std::cout << m_pSelected->getWeapon()->getName() << std::endl;
 // deselect if killed
 		if(m_pSelected->isDead())
 			m_pSelected = NULL;
@@ -149,12 +162,25 @@ void Game::Loop()
 			{
 				if((*it)->getPosX() == (*it2).getPosX() && (*it)->getPosY() == (*it2).getPosY())
 					(*it)->Kill();
+				else if(getDistance((*it)->getPosX(),(*it)->getPosY(),(*it2).getPosX(),(*it2).getPosY()) < (*it2).getSupressionArea())
+				{
+					(*it)->Supress((*it2).getSupression());
+				}
 			}
 	}
 //update renderer;
 	m_pRenderer->Update(m_pSelected, m_lBulletImpacts);
 
 	f_iFrameTime = m_pRenderer->Draw();
+}
+
+int Game::getFastDistance(int x1, int y1, int x2, int y2)
+{
+	return pow(x2 - x1,2) + pow(y2 - y1,2);
+}
+int Game::getDistance(int x1, int y1, int x2, int y2)
+{
+	return sqrt(pow(x2 - x1,2) + pow(y2 - y1,2));
 }
 
 void Game::Run()

@@ -159,7 +159,8 @@ int Renderer::Draw()
 				m_pDriver->draw2DImage(m_pTileset, core::rect<s32>((((*it)).getPosX() *m_iSpriteSize) - m_iViewportX,(((*it)).getPosY() *m_iSpriteSize) - m_iViewportY,(((*it)).getPosX() *m_iSpriteSize) - m_iViewportX +m_iSpriteSize,(((*it)).getPosY() *m_iSpriteSize) - m_iViewportY  +m_iSpriteSize),f_rSpriterect);
 			}
 		}
-
+// GUI here
+		
 		m_pDriver->endScene();
 	}
 	return f_iRealTime;

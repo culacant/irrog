@@ -17,8 +17,8 @@ enum FACING
 {
 	NORTH,
 	EAST,
-	WEST,
 	SOUTH,
+	WEST,
 };
 
 // Coordinate Struct
@@ -35,17 +35,18 @@ class Impact
 private:
 	int m_iPosX;
 	int m_iPosY;
-	int m_iTimeout;
+	int m_iSupression;
+	int m_iSupressionArea;
 public:
-	Impact(int posx, int posy);
-
-	void Update(int frametime);
+	Impact(int posx, int posy, int supression, int supressionArea);
 
 	int getPosX();
 	int getPosY();
 	void setPosX(int posx);
 	void setPosY(int posy);
-	int TimeoutHit();
+
+	int getSupression();
+	int getSupressionArea();
 };
 
 // Actor Class
@@ -75,6 +76,8 @@ private:
 	Weapon *m_wWeapon;
 
 	bool m_bVisible;
+
+	int m_iSupression;
 
 public:
 	Actor(int posx, int posy, char graphic, int team);
@@ -110,6 +113,9 @@ public:
 
 	bool Visible();
 	bool setVisible(bool draw);
+
+	void Supress(int supression);
+	Weapon* getWeapon();
 };
 
 #endif

@@ -1,3 +1,0 @@
-beaten zone at 500 yards:
-	long 140
-	wide 0.5

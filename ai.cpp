@@ -12,7 +12,6 @@ ActorAI::ActorAI(Map *map, Pathfinder *pathfinder)
 void ActorAI::UpdateActor(Actor *actor)
 {
 //	if(actor->getState() == IDLE && !actor->inCover())
-//	if(actor->getState() == IDLE && !actor->inCover())
 //	{
 		SeekCover(actor, 10);
 //		actor->setCover(true);

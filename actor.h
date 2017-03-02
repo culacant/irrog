@@ -72,13 +72,16 @@ private:
 	std::list<Point> *m_lPath;
 
 	int m_iMoveSpeed;
+	int m_iDefaultMoveSpeed;
 
 	Weapon *m_wWeapon;
 
 	bool m_bVisible;
 
 	int m_iSupression;
+	bool m_bInCover;
 
+	int m_iMoveSpeedCheck;
 public:
 	Actor(int posx, int posy, char graphic, int team);
 	~Actor();
@@ -93,6 +96,8 @@ public:
 	int getPosY();
 
 	FACING getFacing();
+	Point getFacingDir();
+
 	void setFacing(FACING facing);
 	void setFacing(int x, int y);
 	bool isFacing(int x, int y);
@@ -115,7 +120,13 @@ public:
 	bool setVisible(bool draw);
 
 	void Supress(int supression);
+	int getSupression();
 	Weapon* getWeapon();
+
+	UNITSTATE getState();
+
+	bool inCover();
+	void setCover(bool cover);
 };
 
 #endif

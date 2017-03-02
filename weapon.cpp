@@ -11,59 +11,60 @@ Weapon::Weapon(char *name, int magsize, int chambertime, int reloadtime, int aim
 
 	m_iChamberTime = chambertime;
 	m_iReloadTime = reloadtime;
-	m_iAimTime = aimtime;
 	m_iBurstCount = burstcount;
+
+	m_iDefaultAimTime = aimtime;
+	m_iAimTime = m_iDefaultAimTime;
 
 	m_iSupression = supression;
 	m_iSupressionArea = supressionarea;
 	
 	m_pName = name;
+
+	int m_iReloadSpeedCheck = m_iReloadTime;
+	int m_iChamberSpeedCheck = m_iChamberTime;
+	int m_iAimSpeedCheck = m_iAimTime;
+	int m_iBurstCountCheck = m_iBurstCount;
 }
 
 void Weapon::Update(int frametime)
 {
-	static int f_iReloadSpeedCheck = m_iReloadTime;
-	static int f_iChamberSpeedCheck = m_iChamberTime;
-	static int f_iAimSpeedCheck = m_iAimTime;
-
-	static int f_iBurstCountCheck = m_iBurstCount;
-
 	if(m_iMagRemaining == 0)
 	{
 		Reload();
-		f_iBurstCountCheck = m_iBurstCount;
+		m_iBurstCountCheck = m_iBurstCount;
 	}
 
 	if(m_bReloading)
 	{
-		f_iReloadSpeedCheck -= frametime;
-		if(f_iReloadSpeedCheck < 0)
+		m_iReloadSpeedCheck -= frametime;
+		if(m_iReloadSpeedCheck < 0)
 		{
-			f_iReloadSpeedCheck = m_iReloadTime;
+			m_iReloadSpeedCheck = m_iReloadTime;
 			m_iMagRemaining = m_iMagSize;
 			m_bReloading = false;
 		}
 	}
 	if(m_bAiming)
 	{
-		f_iAimSpeedCheck -= frametime;
-		if(f_iAimSpeedCheck < 0)
+		m_iAimSpeedCheck -= frametime;
+		if(m_iAimSpeedCheck < 0)
 		{
-			f_iAimSpeedCheck = m_iAimTime;
+			m_iAimSpeedCheck = m_iAimTime;
 			m_bAiming = false;
 		}
 	}
 	if(m_bFiring && !m_bReloading && !m_bAiming)
 	{
-		f_iChamberSpeedCheck -= frametime;
-		if(f_iChamberSpeedCheck < 0)
+		m_iChamberSpeedCheck -= frametime;
+		if(m_iChamberSpeedCheck < 0)
 		{
-			f_iChamberSpeedCheck = m_iChamberTime;
+			m_iChamberSpeedCheck = m_iChamberTime;
 			m_iMagRemaining--;
-			f_iBurstCountCheck--;
-			if(f_iBurstCountCheck < 0)
+			m_iBurstCountCheck--;
+			if(m_iBurstCountCheck < 0)
 			{
-				f_iBurstCountCheck = m_iBurstCount;
+				m_iBurstCountCheck = m_iBurstCount;
 				m_bAiming = true;
 			}
 			m_bHasFired = true;
@@ -106,4 +107,13 @@ int Weapon::getSupressionArea()
 char* Weapon::getName()
 {
 	return m_pName;
+}
+
+void Weapon::setAimDelay(int aimdelay)
+{
+	m_iAimTime = aimdelay + m_iDefaultAimTime;
+}
+void Weapon::ResetAimDelay()
+{
+	m_iAimTime = m_iDefaultAimTime;
 }

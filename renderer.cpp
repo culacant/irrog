@@ -160,7 +160,17 @@ int Renderer::Draw()
 			}
 		}
 // GUI here
-		
+		gui::IGUIFont * font = m_pDevice->getGUIEnvironment()->getBuiltInFont();
+		if(font)
+		{
+			core::stringw out(L"Supression: ");
+			if(m_pSelected)
+				out += m_pSelected->getSupression();
+			else
+				out += "0";
+			font->draw(out,core::rect<s32>(130,10,300,50),video::SColor(255,255,255,255));
+		}
+// draw everything
 		m_pDriver->endScene();
 	}
 	return f_iRealTime;

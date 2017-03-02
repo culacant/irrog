@@ -66,12 +66,15 @@ Actor::Actor(int posx = 1, int posy = 1, char graphic = '@', int team = 1)
 	m_lBulletImpacts = new std::list<Impact>();
 
 //	m_wWeapon = new Weapon(5,1000,5000);
-	m_wWeapon = new Weapon("Lee Enfield",3000,10,5000,1000,100,100,5);
-	m_iMoveSpeed = 1000/2;
+	m_wWeapon = new Weapon("Lee Enfield",3000,1000,1,1000,1,10000,5);
+	m_iDefaultMoveSpeed = 1000/2;
+	m_iMoveSpeed = m_iDefaultMoveSpeed;
+	m_iMoveSpeedCheck = m_iMoveSpeed;
 
 	m_bVisible = true;
 	
 	m_iSupression = 0;
+	m_bInCover = false;
 }
 
 Actor::~Actor()
@@ -112,6 +115,28 @@ int Actor::getPosY()
 FACING Actor::getFacing()
 {
 	return m_sFacing;
+}
+Point Actor::getFacingDir()
+{
+	Point facing;
+	facing.X = 0;
+	facing.Y = 0;
+	switch(m_sFacing)
+	{
+		case NORTH:
+			facing.Y=-1;
+			break;
+		case SOUTH:
+			facing.Y=1;
+			break;
+		case EAST:
+			facing.X=1;
+			break;
+		case WEST:
+			facing.X=-1;
+			break;
+	}
+	return facing;
 }
 
 void Actor::setFacing(FACING facing)
@@ -204,7 +229,10 @@ int Actor::isDead()
 
 void Actor::Update(int frametime)
 {
-	static int f_iMoveSpeedCheck = m_iMoveSpeed;
+	m_iMoveSpeed = m_iDefaultMoveSpeed + m_iSupression/2;
+	m_wWeapon->ResetAimDelay();
+	m_wWeapon->setAimDelay(m_iSupression/2);
+
 	m_wWeapon->Update(frametime);
 	if(m_sState == FIRING)
 	{
@@ -231,19 +259,26 @@ void Actor::Update(int frametime)
 
 	if(m_lPath && m_sState == MOVING)
 	{
-		f_iMoveSpeedCheck -= frametime;
-		if(f_iMoveSpeedCheck < 0)
+		m_iMoveSpeedCheck -= frametime;
+		if(m_iMoveSpeedCheck < 0)
 		{
-			f_iMoveSpeedCheck = m_iMoveSpeed;
+			m_iMoveSpeedCheck = m_iMoveSpeed;
 			if(!m_lPath->empty())
 			{
 				setFacing((*m_lPath->begin()).X,(*m_lPath->begin()).Y);
 				setPos((*m_lPath->begin()).X,(*m_lPath->begin()).Y);
 				m_lPath->pop_front();
+				if(m_lPath->empty())
+					m_sState = IDLE;
 			}
 		}
 	}
-	m_iSupression -= 10;
+	if(m_iSupression > 0)
+		m_iSupression -= frametime/2;
+	if(m_iSupression > 10000)
+		m_iSupression = 10000;
+	if(m_iSupression < 0)
+		m_iSupression = 0;
 }
 
 bool Actor::Visible()
@@ -258,10 +293,26 @@ bool Actor::setVisible(bool draw)
 void Actor::Supress(int supression)
 {
 	m_iSupression += supression;
-	std::cout << m_iSupression << std::endl;
+}
+int Actor::getSupression()
+{
+	return m_iSupression;
 }
 
 Weapon* Actor::getWeapon()
 {
 	return m_wWeapon;
+}
+
+UNITSTATE Actor::getState()
+{
+	return m_sState;
+}
+bool Actor::inCover()
+{
+	return m_bInCover;
+}
+void Actor::setCover(bool cover)
+{
+	m_bInCover = cover;
 }

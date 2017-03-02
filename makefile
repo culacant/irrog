@@ -2,15 +2,17 @@ CC = g++
 CFLAGS = -lasan -lIrrlicht -ggdb
 
 irrog: main.o
-	$(CC) $(CFLAGS) obj/pathfinder.o obj/input.o obj/game.o obj/renderer.o obj/main.o obj/map.o obj/squad.o obj/actor.o obj/weapon.o -o irrog
+	$(CC) $(CFLAGS) obj/pathfinder.o obj/input.o obj/game.o obj/renderer.o obj/ai.o obj/main.o obj/map.o obj/squad.o obj/actor.o obj/weapon.o -o irrog
 main.o: main.cpp game.o
 	$(CC) $(CFLAGS) main.cpp -c -o obj/main.o
-game.o: game.cpp renderer.o map.o squad.o actor.o weapon.o input.o pathfinder.o
+game.o: game.cpp renderer.o map.o squad.o actor.o weapon.o input.o pathfinder.o ai.o
 	$(CC) $(CFLAGS) game.cpp -c -o obj/game.o
-renderer.o: renderer3d.cpp map.o actor.o
-	$(CC) $(CFLAGS) renderer3d.cpp -c -o obj/renderer.o
+renderer.o: renderer.cpp map.o actor.o
+	$(CC) $(CFLAGS) renderer.cpp -c -o obj/renderer.o
 map.o: map.cpp
 	$(CC) $(CFLAGS) map.cpp -c -o obj/map.o
+ai.o: ai.cpp
+	$(CC) $(CFLAGS) ai.cpp -c -o obj/ai.o
 squad.o: squad.cpp
 	$(CC) $(CFLAGS) squad.cpp -c -o obj/squad.o
 actor.o: actor.cpp
@@ -23,5 +25,3 @@ pathfinder.o: pathfinder.cpp
 	$(CC) $(CFLAGS) pathfinder.cpp -c -o obj/pathfinder.o
 clean:
 	rm obj/* irrog
-renderer2d.o: renderer.cpp map.o actor.o
-	$(CC) $(CFLAGS) renderer.cpp -c -o obj/renderer.o

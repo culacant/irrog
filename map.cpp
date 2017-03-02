@@ -285,6 +285,10 @@ void Map::ReadMapFromFile()
 		{
 			case '1':
 				TileAt(x,y)->setGraphic(c);
+				TileAt(x,y)->setCanWalk(true);
+				TileAt(x,y)->setCanSee(true);
+				TileAt(x,y)->setCover(0);
+				TileAt(x,y)->setConcealment(0);
 				x++;
 				break;
 			case '2':

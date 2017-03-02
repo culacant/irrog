@@ -1,6 +1,7 @@
 #ifndef GAME_H
 #define GAME_H
 
+#include "ai.h"
 #include "actor.h"
 #include "map.h"
 #include "renderer.h"
@@ -20,6 +21,8 @@ private:
 
 	Actor* m_pSelected;
 	std::list<Actor*> m_lActorList;
+
+	ActorAI *m_pActorAI;
 
 	std::list<Impact> *m_lBulletImpacts;
 

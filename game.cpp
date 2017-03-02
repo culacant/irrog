@@ -18,6 +18,8 @@ Game::Game()
 	m_lActorList.push_back(new Actor(5,5,'@',1));
 	m_lActorList.push_back(new Actor(20,5,'@',2));
 
+	m_pActorAI = new ActorAI(m_pMap,m_pPathfinder);
+
 	m_lBulletImpacts = new std::list<Impact>();
 	m_pRenderer = new Renderer(m_pMap, &m_lActorList,NULL,m_lBulletImpacts, m_pInputHandler);
 }
@@ -33,6 +35,7 @@ Game::~Game()
 		delete (*it);
 	}
 	m_lActorList.clear();
+	delete m_pActorAI;
 	delete m_lBulletImpacts;
 }
 
@@ -54,6 +57,7 @@ void Game::Loop()
 	// selector
 	if(m_pInputHandler->MouseLeftButtonDown())
 	{
+		m_pRenderer->TileAt(m_pInputHandler->MousePositionX(),m_pInputHandler->MousePositionY());
 		int x,y;
 		x = m_pRenderer->TileXAt(m_pInputHandler->MousePositionX());
 		y = m_pRenderer->TileYAt(m_pInputHandler->MousePositionY());
@@ -108,16 +112,14 @@ void Game::Loop()
 	}
 	if(m_pInputHandler->IsKeyDown(KEY_TEST))
 	{
-		int x,y;
-		x = m_pRenderer->TileXAt(m_pInputHandler->MousePositionX());
-		y = m_pRenderer->TileYAt(m_pInputHandler->MousePositionY());
-		m_pPathfinder->FindPath(x,y,0,0);
+		if(m_pSelected)
+			m_pActorAI->UpdateActor(m_pSelected);
 	}
 // ticking
 	// selected actor
 	if(m_pSelected)
 	{
-		std::cout << m_pSelected->getWeapon()->getName() << std::endl;
+//		std::cout << m_pSelected->getWeapon()->getName() << std::endl;
 // deselect if killed
 		if(m_pSelected->isDead())
 			m_pSelected = NULL;
@@ -127,6 +129,7 @@ void Game::Loop()
 	m_lBulletImpacts->clear();
 	for(std::list<Actor*>::iterator it = m_lActorList.begin(); it != m_lActorList.end(); ++it)
 	{
+	//	m_pActorAI->UpdateActor((*it));
 		(*it)->Update(f_iFrameTime);
 		for(std::list<Impact>::iterator it2 = (*it)->getBulletImpacts()->begin(); it2 != (*it)->getBulletImpacts()->end(); ++it2)
 		{
@@ -161,7 +164,8 @@ void Game::Loop()
 			for(std::list<Impact>::iterator it2 = m_lBulletImpacts->begin(); it2 != m_lBulletImpacts->end(); ++it2)
 			{
 				if((*it)->getPosX() == (*it2).getPosX() && (*it)->getPosY() == (*it2).getPosY())
-					(*it)->Kill();
+					int a = 1;
+//					(*it)->Kill();
 				else if(getDistance((*it)->getPosX(),(*it)->getPosY(),(*it2).getPosX(),(*it2).getPosY()) < (*it2).getSupressionArea())
 				{
 					(*it)->Supress((*it2).getSupression());

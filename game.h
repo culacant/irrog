@@ -3,6 +3,7 @@
 
 #include "ai.h"
 #include "actor.h"
+#include "squad.h"
 #include "map.h"
 #include "renderer.h"
 #include "input.h"
@@ -21,6 +22,8 @@ private:
 
 	Actor* m_pSelected;
 	std::list<Actor*> m_lActorList;
+	Squad* m_pSelectedSquad;
+	std::list<Squad*> m_lSquadList;
 
 	ActorAI *m_pActorAI;
 

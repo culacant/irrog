@@ -16,12 +16,23 @@ Game::Game()
 	
 	m_pSelected = NULL;
 	m_lActorList.push_back(new Actor(5,5,'@',1));
+	m_lActorList.push_back(new Actor(6,5,'@',1));
 	m_lActorList.push_back(new Actor(20,5,'@',2));
+
+	m_pSelectedSquad = NULL;
+	m_lSquadList.push_back(new Squad(1,1,1,1,m_pPathfinder));
 
 	m_pActorAI = new ActorAI(m_pMap,m_pPathfinder);
 
 	m_lBulletImpacts = new std::list<Impact>();
 	m_pRenderer = new Renderer(m_pMap, &m_lActorList,NULL,m_lBulletImpacts, m_pInputHandler);
+
+
+	for(std::list<Actor*>::iterator it = m_lActorList.begin(); it != m_lActorList.end(); ++it)
+	{
+		(*m_lSquadList.begin())->addToSquad((*it));
+		std::cout << (*it)->getSquad() << std::endl;
+	}
 }
 
 Game::~Game()
@@ -35,6 +46,13 @@ Game::~Game()
 		delete (*it);
 	}
 	m_lActorList.clear();
+
+	for(std::list<Squad*>::iterator it = m_lSquadList.begin(); it != m_lSquadList.end(); ++it)
+	{
+		delete (*it);
+	}
+	m_lSquadList.clear();
+
 	delete m_pActorAI;
 	delete m_lBulletImpacts;
 }
@@ -62,58 +80,59 @@ void Game::Loop()
 		x = m_pRenderer->TileXAt(m_pInputHandler->MousePositionX());
 		y = m_pRenderer->TileYAt(m_pInputHandler->MousePositionY());
 		m_pSelected = NULL;
+		m_pSelectedSquad = NULL;
 		for(std::list<Actor*>::iterator it = m_lActorList.begin(); it != m_lActorList.end(); ++it)
 		{
 			if((*it)->getPosX() == x && (*it)->getPosY() == y )
+			{
 				m_pSelected = (*it);
+				m_pSelectedSquad = (*it)->getSquad();
+			}
 		}
 	}
 	// facing set
 	if(m_pInputHandler->IsKeyDown(KEY_SET_FACING))
 	{
-		if(m_pSelected)
+		if(m_pSelectedSquad)
 		{
 			int x,y;
 			x = m_pRenderer->TileXAt(m_pInputHandler->MousePositionX());
 			y = m_pRenderer->TileYAt(m_pInputHandler->MousePositionY());
-			m_pSelected->setFacing(x,y);
+			m_pSelectedSquad->setFacing(x,y);
 		}
 	}
 	// target set
 	if(m_pInputHandler->IsKeyDown(KEY_SET_TARGETPOS))
 	{
-		if(m_pSelected)
+		if(m_pSelectedSquad)
 		{
 			int x,y;
 			x = m_pRenderer->TileXAt(m_pInputHandler->MousePositionX());
 			y = m_pRenderer->TileYAt(m_pInputHandler->MousePositionY());
-			if(m_pMap->inLos(m_pSelected->getPosX(), m_pSelected->getPosY(),x,y))
-				m_pSelected->setTargetPos(x,y);
+			if(m_pMap->inLos(m_pSelectedSquad->getPosX(), m_pSelectedSquad->getPosY(),x,y))
+				m_pSelectedSquad->setTargetPos(x,y);
 		}
 	}
 	// target clear
 	if(m_pInputHandler->IsKeyDown(KEY_CLEAR_TARGETPOS))
 	{
-		if(m_pSelected)
-			m_pSelected->clearTargetPos();
+		if(m_pSelectedSquad)
+			m_pSelectedSquad->clearTargetPos();
 	}
 	if(m_pInputHandler->IsKeyDown(KEY_MOVE))
 	{
-		if(m_pSelected)
+		if(m_pSelectedSquad)
 		{
 			int x,y;
 			x = m_pRenderer->TileXAt(m_pInputHandler->MousePositionX());
 			y = m_pRenderer->TileYAt(m_pInputHandler->MousePositionY());
-
-			std::list<Point> *f_pPath = m_pPathfinder->FindPath(m_pSelected->getPosX(),m_pSelected->getPosY(),x,y);
-			if(f_pPath)
-				m_pSelected->setPath(f_pPath);
+			m_pSelectedSquad->setMoveTarget(x,y);
 		}
 	}
 	if(m_pInputHandler->IsKeyDown(KEY_TEST))
 	{
-		if(m_pSelected)
-			m_pActorAI->UpdateActor(m_pSelected);
+		if(m_pSelectedSquad)
+			m_pSelectedSquad->Update(m_pActorAI);
 	}
 // ticking
 	// selected actor
@@ -124,6 +143,7 @@ void Game::Loop()
 		if(m_pSelected->isDead())
 			m_pSelected = NULL;
 	}
+	// dont need to deselect dead squad
 
 // update bulletlist
 	m_lBulletImpacts->clear();

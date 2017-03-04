@@ -316,3 +316,12 @@ void Actor::setCover(bool cover)
 {
 	m_bInCover = cover;
 }
+
+void Actor::setSquad(Squad* squad)
+{
+	m_pSquad = squad;
+}
+Squad* Actor::getSquad()
+{
+	return m_pSquad;
+}

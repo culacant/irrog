@@ -5,6 +5,9 @@
 
 #include <list>
 
+// forward declaration of Squad
+class Squad;
+
 enum UNITSTATE
 {
 	DEAD,
@@ -82,6 +85,7 @@ private:
 	bool m_bInCover;
 
 	int m_iMoveSpeedCheck;
+	Squad* m_pSquad;
 public:
 	Actor(int posx, int posy, char graphic, int team);
 	~Actor();
@@ -127,6 +131,9 @@ public:
 
 	bool inCover();
 	void setCover(bool cover);
+
+	void setSquad(Squad* squad);
+	Squad* getSquad();
 };
 
 #endif
